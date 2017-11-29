@@ -6,12 +6,14 @@
 
 ; Initial Statements and Registers
 
-		MOV		R0, #0 ; 
-		MOV		R1, #0 ; valor inicial do contador
-		ADD		R9, R0, #2 ; R9 recebe valor de R0 + 2 -  valor de base
-		MOV		R5, #4000 ; memoria a partir da qual valores serão armazenados
+		AND		R9, R9, #0 ; zerar registrador
+		AND		R1, R1, #0 ; valor inicial do contador
+		AND		R5, R5, #0 ; gerar registrador
+		AND		R6, R6, #0 ; zerar registrador
+		ADD		R9,R9, #2 ;R4 recebe valor de R0 + 2 -  valor de base
+		ADD		R5, R5, #4000 ; memoria a partir da qual valores serão armazenados
 		STR		R9,[R5, #0] ; armazenar valor de base no endereço 4000
-		MOV		R6, #2147483648 ; valor máximo que PG pode alcançar
+		ADD		R6, R6, #2147483648 ; valor máximo que PG pode alcançar
 
 ; PG itself
 
