@@ -1,10 +1,10 @@
-# IFES CAMPUS SERRA
-# ENGENHARIA DE CONTROLE E AUTOMAÇÃO
-# Trabalho Arquitetura de COmputadores
-# Programa em assembly para calcular, a partir de um numero base de entrada, uma progressão geométrica com razão 2, numa sequência de 10 números.
-# Adriele Ramos e Amanda Lucas
+; IFES CAMPUS SERRA
+; ENGENHARIA DE CONTROLE E AUTOMAÇÃO
+; Trabalho Arquitetura de COmputadores
+; Programa em assembly para calcular, a partir de um numero base de entrada, uma progressão geométrica com razão 2, numa sequência de 10 números.
+; Adriele Ramos e Amanda Lucas
 
-# Initial Statements and Registers
+; Initial Statements and Registers
 
 		MOV		R0, #0 ; 
 		MOV		R1, #0 ; valor inicial do contador
@@ -13,7 +13,7 @@
 		STR		R9,[R5, #0] ; armazenar valor de base no endereço 4000
 		MOV		R6, #2147483648 ; valor máximo que PG pode alcançar
 
-# PG itself
+; PG itself
 
 WHILE
 		CMP		R1, #9		; enquanto não tiver 10 valores na PG
