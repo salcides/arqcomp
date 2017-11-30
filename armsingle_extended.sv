@@ -229,20 +229,34 @@ module decoder(input  logic [1:0] Op,
   always_comb
     if (ALUOp) begin                 // which DP Instr?
 	case(Funct[4:1]) 
-  	    4'b0100: ALUControl = 2'b00;
-		     NoWrite = 0;// ADD
-  	    4'b0010: ALUControl = 2'b01; 
-		     NoWrite = 1;// SUB
-            4'b0000: ALUControl = 2'b10;
-		     NoWrite = 2;// AND
-  	    4'b1100: ALUControl = 2'b11;
-		     NoWrite = 3; // ORR
-	    4'b1010: ALUControl = 2'b01; // função CMP - Funct (cmd) e ALUControl - saida de  controle  igual a do subtrator, pois essa função subtrai para comparar resultados
- 	   	     NoWrite = 1;
-	    4'b1000: ALUControl = 2'b10; // função TST- Funct (cmd) e ALUControl - saida de controle igual a do AND, pois essa função 
-  	             NoWrite = 1;
-	default: ALUControl = 2'bx;
-		     NoWrite = 1'bx;// unimplemented
+		4'b0100: begin
+			ALUControl = 2'b00;
+			  NoWrite = 0;// ADD
+		end
+		4'b0010: begin 
+			ALUControl = 2'b01; 
+			  NoWrite = 0;// SUB
+		end
+		4'b0000: begin
+			ALUControl = 2'b10;
+			  NoWrite = 0;// AND
+		end
+		4'b1100: begin
+			ALUControl = 2'b11;
+			  NoWrite = 0; // ORR
+		end
+		4'b1010: begin
+			ALUControl = 2'b01; 
+			  NoWrite = 1; // função CMP - Funct (cmd) e ALUControl - saida de  controle  igual a do subtrator, pois essa função subtrai para comparar resultados
+		end
+		4'b1000: begin
+			ALUControl = 2'b10; 
+			  NoWrite = 1; // função TST- Funct (cmd) e ALUControl - saida de controle igual a do AND, pois essa função realiza uma operação AND entre o Rn e o Operand2
+		end
+		default: begin
+			ALUControl = 2'bx;
+			  NoWrite = 1'bx;// unimplemented
+		end
       endcase
               
   // PC Logic
