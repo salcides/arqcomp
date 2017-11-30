@@ -229,22 +229,20 @@ module decoder(input  logic [1:0] Op,
   always_comb
     if (ALUOp) begin                 // which DP Instr?
 	case(Funct[4:1]) 
-  	    4'b0100: ALUControl = 2'b00; // ADD
-  	    4'b0010: ALUControl = 2'b01; // SUB
-            4'b0000: ALUControl = 2'b10; // AND
-  	    4'b1100: ALUControl = 2'b11; // ORR
+  	    4'b0100: ALUControl = 2'b00;
+		     NoWrite = 0;// ADD
+  	    4'b0010: ALUControl = 2'b01; 
+		     NoWrite = 1;// SUB
+            4'b0000: ALUControl = 2'b10;
+		     NoWrite = 2;// AND
+  	    4'b1100: ALUControl = 2'b11;
+		     NoWrite = 3; // ORR
 	    4'b1010: ALUControl = 2'b01; // função CMP - Funct (cmd) e ALUControl - saida de  controle  igual a do subtrator, pois essa função subtrai para comparar resultados
- 	    4'b1000: ALUControl = 2'b10; // função TST- Funct (cmd) e ALUControl - saida de controle igual a do AND, pois essa função 
-  	    default: ALUControl = 2'bx;  // unimplemented
-      endcase
-      case(Funct[4:1]) 
-  	    4'b0100: NoWrite = 2'b00; // ADD
-  	    4'b0010: NoWrite = 2'b01; // SUB
-    	    4'b0000: NoWrite = 2'b10; // AND
-  	    4'b1100: NoWrite = 2'b11; // ORR
-	    4'b1010: NoWrite = 1;
-	    4'b1000: NoWrite = 2'b
-  	    default: NoWrite = 2'bx;  // unimplemented
+ 	   	     NoWrite = 1;
+	    4'b1000: ALUControl = 2'b10; // função TST- Funct (cmd) e ALUControl - saida de controle igual a do AND, pois essa função 
+  	             NoWrite = 1;
+	default: ALUControl = 2'bx;
+		     NoWrite = 1'bx;// unimplemented
       endcase
               
   // PC Logic
