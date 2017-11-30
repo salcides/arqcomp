@@ -228,25 +228,24 @@ module decoder(input  logic [1:0] Op,
   // ALU Decoder             
   always_comb
     if (ALUOp) begin                 // which DP Instr?
-      case(Funct[4:1]) 
+	case(Funct[4:1]) 
   	    4'b0100: ALUControl = 2'b00; // ADD
   	    4'b0010: ALUControl = 2'b01; // SUB
-    	    4'b0000: ALUControl = 2'b10; // AND
+            4'b0000: ALUControl = 2'b10; // AND
   	    4'b1100: ALUControl = 2'b11; // ORR
-	    4'b1010: NoWrite = 1;
-	    4'b1000: ALUControl = 2'b
+	    4'b1010: ALUControl = 2'b01; // função CMP - Funct (cmd) e ALUControl - saida de  controle  igual a do subtrator, pois essa função subtrai para comparar resultados
+ 	    4'b1000: ALUControl = 2'b10; // função TST- Funct (cmd) e ALUControl - saida de controle igual a do AND, pois essa função 
   	    default: ALUControl = 2'bx;  // unimplemented
       endcase
-      // update flags if S bit is set 
-	// (C & V only updated for arith instructions)
-      FlagW[1]      = Funct[0]; // FlagW[1] = S-bit
-	// FlagW[0] = S-bit & (ADD | SUB)
-      FlagW[0]      = Funct[0] & 
-        (ALUControl == 2'b00 | ALUControl == 2'b01); 
-    end else begin
-      ALUControl = 2'b00; // add for non-DP instructions
-      FlagW      = 2'b00; // don't update Flags
-    end
+      case(Funct[4:1]) 
+  	    4'b0100: NoWrite = 2'b00; // ADD
+  	    4'b0010: NoWrite = 2'b01; // SUB
+    	    4'b0000: NoWrite = 2'b10; // AND
+  	    4'b1100: NoWrite = 2'b11; // ORR
+	    4'b1010: NoWrite = 1;
+	    4'b1000: NoWrite = 2'b
+  	    default: NoWrite = 2'bx;  // unimplemented
+      endcase
               
   // PC Logic
   assign PCS  = ((Rd == 4'b1111) & RegW) | Branch; 
