@@ -77,6 +77,7 @@ module testbench();
 
   logic        clk;
   logic        reset;
+logic teste;
 
   logic [31:0] WriteData, DataAdr;
   logic        MemWrite;
