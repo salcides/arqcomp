@@ -184,14 +184,14 @@ module controller(input  logic         clk, reset,
                   output logic         PCSrc);
 
   logic [1:0] FlagW;
-  logic       PCS, RegW, MemW;
+  logic       PCS, RegW, MemW, NoWrite; //NOWRITE IMPLEMENTADO
   
   decoder dec(Instr[27:26], Instr[25:20], Instr[15:12],
               FlagW, PCS, RegW, MemW,
-              MemtoReg, ALUSrc, ImmSrc, RegSrc, ALUControl, NoWrite); //PARA IMPLEMENTAR A FUNÇÃO CMP, DEVE-SE ACRESCENTAR O NOWRITE NO ENCODER
+              MemtoReg, ALUSrc, NoWrite, ImmSrc, RegSrc, ALUControl); //PARA IMPLEMENTAR A FUNÇÃO CMP, DEVE-SE ACRESCENTAR O NOWRITE NO ENCODER
   condlogic cl(clk, reset, Instr[31:28], ALUFlags,
-               FlagW, PCS, RegW, MemW,
-               PCSrc, RegWrite, MemWrite, NoWrite); //PARA IMPLEMENTAR FUNÇÃO CMP, DEVE-SE IMPLEMENTAR O NOWRITE
+               FlagW, PCS, RegW, MemW, NoWrite,
+               PCSrc, RegWrite, MemWrite); //PARA IMPLEMENTAR FUNÇÃO CMP, DEVE-SE IMPLEMENTAR O NOWRITE
 endmodule
 
 module decoder(input  logic [1:0] Op,
@@ -254,14 +254,17 @@ module decoder(input  logic [1:0] Op,
 			ALUControl = 2'b10; 
 			  NoWrite = 1; // função TST- Funct (cmd) e ALUControl - saida de controle igual a do AND, pois essa função realiza uma operação AND entre o Rn e o Operand2
 		end
+		
 		default: begin
 			ALUControl = 2'bx;
 			  NoWrite = 1'bx;// unimplemented
 		end
       endcase
+end
               
   // PC Logic
   assign PCS  = ((Rd == 4'b1111) & RegW) | Branch; 
+
 endmodule
 
 module condlogic(input  logic       clk, reset,
@@ -335,6 +338,7 @@ module datapath(input  logic        clk, reset,
   logic [31:0] PCNext, PCPlus4, PCPlus8;
   logic [31:0] ExtImm, SrcA, SrcB, Result;
   logic [3:0]  RA1, RA2;
+  logic [31:0] saida_shifter; // ADICIONADA SAIDA DO SHIFTER
 
   // next PC logic
   mux2 #(32)  pcmux(PCPlus4, Result, PCSrc, PCNext);
@@ -347,9 +351,9 @@ module datapath(input  logic        clk, reset,
   mux2 #(4)   ra2mux(Instr[3:0], Instr[15:12], RegSrc[1], RA2);
 
       // ADDED FOR LSL IMPLEMENTATION
-      wire [31:0] saida_shifter;
-      shifter sh1(SrcA,SrcB,saida_shifter);
-	mux_2 #(32) m1(ALUResult, saida_shifter,Instr[24:21],RA1);
+     // wire [31:0] saida_shifter;
+      shifter sh1(SrcA,SrcB[11:7],saida_shifter);
+      mux_2 #(32) m1(ALUResult, saida_shifter,Instr[24:21],RA1);
 
   regfile     rf(clk, RegWrite, RA1, RA2,
                  Instr[15:12], Result, PCPlus8, 
@@ -466,7 +470,7 @@ module alu(input  logic [31:0] a, b,
 endmodule
 
 module shifter(input logic [31:0] a,
-               input logic [3:0] shamt,
+               input logic [4:0] shamt,
                output logic [31:0] shifted);
 
 initial
@@ -476,19 +480,19 @@ end
 endmodule
 
 module mux_2 #(parameter WIDTH = 32)
-	(input  logic [WIDTH-1:0] alu, deslocamento, 
-         input  logic             s1, 
-	 output logic [WIDTH-1:0] saida);
+	(input  logic [WIDTH-1:0] alu, deslocamento,
+         input  logic [3:0] aux, 
+	 output logic [31:0] saida);
 
-	case (cmd)
-		4'b1101: s1 = 1;
-		4'b0100: s1 = 0;
-		4'b0010: s1 = 0;
-		4'b0000: s1 = 0;
-		4'b1100: s1 = 0;
-		4'b1010: s1 =0;
-		4'b1000: s1 = 0;
-		
-  assign saida = s1 ? alu : deslocamento; 
+always_comb
+	case (aux)
+		4'b1101: assign saida = deslocamento;
+		4'b0100: assign saida = alu;
+		4'b0010: assign saida = alu;
+		4'b0000: assign saida = alu;
+		4'b1100: assign saida = alu;
+		4'b1010: assign saida = alu;
+		4'b1000: assign saida = alu;
+	default: assign saida = 32'bx;
+	endcase		 
 endmodule	
-
