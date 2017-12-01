@@ -469,5 +469,22 @@ initial
 begin
 shifted = a<<shamt;
 end
-
 endmodule
+
+module mux_2 #(parameter WIDTH = 32)
+	(input  logic [WIDTH-1:0] alu, deslocamento, 
+         input  logic             s1, 
+	 output logic [WIDTH-1:0] saida);
+
+	case (cmd)
+		4'b1101: s1 = 1;
+		4'b0100: s1 = 0;
+		4'b0010: s1 = 0;
+		4'b0000: s1 = 0;
+		4'b1100: s1 = 0;
+		4'b1010: s1 =0;
+		4'b1000: s1 = 0;
+		
+  assign saida = s1 ? alu : deslocamento; 
+endmodule	
+
