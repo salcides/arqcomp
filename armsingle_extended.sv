@@ -359,6 +359,13 @@ module datapath(input  logic        clk, reset,
   mux2 #(32)  srcbmux(WriteData, ExtImm, ALUSrc, SrcB);
   alu         alu(SrcA, SrcB, ALUControl, 
                   ALUResult, ALUFlags);
+
+  // ADDED FOR LSL IMPLEMENTATION
+  wire [31:0] saida_shifter;
+  mux_2 #(32) m1(ALUResult, saida_shifter,Instr[31:28],RA1);
+  shifter sh1(SrcA,SrcB,saida_shifter);
+
+
 endmodule
 
 module regfile(input  logic        clk, 
