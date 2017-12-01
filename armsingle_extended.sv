@@ -469,12 +469,13 @@ initial
 begin
 shifted = a<<shamt;
 end
+endmodule
 
-	module mux2' #(parameter WIDTH = 32)
-		(input  logic [WIDTH-1:0] alu, deslocamento, 
-              input  logic             s1, 
-		 output logic [WIDTH-1:0] saida);
+module mux_2 #(parameter WIDTH = 32)
+	(input  logic [WIDTH-1:0] alu, deslocamento, 
+         input  logic             s1, 
+	 output logic [WIDTH-1:0] saida);
 
   assign saida = s1 ? alu : deslocamento; 
 endmodule	
-endmodule
+
