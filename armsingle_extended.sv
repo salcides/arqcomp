@@ -461,4 +461,13 @@ module alu(input  logic [31:0] a, b,
   assign ALUFlags    = {neg, zero, carry, overflow};
 endmodule
 
+module shifter(input logic [31:0] a,
+               input logic [3:0] shamt,
+               output logic [31:0] shifted);
 
+initial
+begin
+shifted = a<<shamt;
+end
+
+endmodule
