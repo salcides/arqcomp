@@ -254,10 +254,6 @@ module decoder(input  logic [1:0] Op,
 			ALUControl = 2'b10; 
 			  NoWrite = 1; // função TST- Funct (cmd) e ALUControl - saida de controle igual a do AND, pois essa função realiza uma operação AND entre o Rn e o Operand2
 		end
-		4'b1101 begin
-			case(sh[1:0])
-				2'b00: ALUControl = 2'00; //Se o cmd for 1101 (para shift) e sh for 00 (para LSL), faz-se soma 
-				end
 		default: begin
 			ALUControl = 2'bx;
 			  NoWrite = 1'bx;// unimplemented
@@ -353,7 +349,7 @@ module datapath(input  logic        clk, reset,
       // ADDED FOR LSL IMPLEMENTATION
       wire [31:0] saida_shifter;
       shifter sh1(SrcA,SrcB,saida_shifter);
-      mux_2 #(32) m1(ALUResult, saida_shifter,Instr[31:28],RA1);
+	mux_2 #(32) m1(ALUResult, saida_shifter,Instr[24:21],RA1);
 
   regfile     rf(clk, RegWrite, RA1, RA2,
                  Instr[15:12], Result, PCPlus8, 
