@@ -467,7 +467,7 @@ module shifter(input logic [31:0] a,
 
 initial
 begin
-shifted = a<<shamt;
+	assign shifted = a<<shamt;
 end
 endmodule
 
