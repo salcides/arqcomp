@@ -77,7 +77,6 @@ module testbench();
 
   logic        clk;
   logic        reset;
-logic teste;
 
   logic [31:0] WriteData, DataAdr;
   logic        MemWrite;
@@ -101,6 +100,9 @@ logic teste;
   always @(negedge clk)
     begin
       if(MemWrite) begin
+
+	$display(DataAdr);
+
         if(DataAdr === 4036 & WriteData === 1024) begin //VERIFICAR SE O ENDEREÇO DE MEMÓRIA CONTÉM O VALOR FINAL DA PG
           $display("Simulation succeeded");
           $stop;
@@ -169,7 +171,7 @@ module arm(input  logic        clk, reset,
               ALUSrc, ALUControl,
               MemtoReg, PCSrc,
               ALUFlags, PC, Instr,
-              ALUResult, WriteData, ReadData);
+              ALUResult, WriteData, ReadData); // adicionado saida mux e shifter
 endmodule
 
 module controller(input  logic         clk, reset,
@@ -338,7 +340,7 @@ module datapath(input  logic        clk, reset,
   logic [31:0] PCNext, PCPlus4, PCPlus8;
   logic [31:0] ExtImm, SrcA, SrcB, Result;
   logic [3:0]  RA1, RA2;
-  logic [31:0] saida_shifter; // ADICIONADA SAIDA DO SHIFTER
+  wire [31:0] saida_mux, saida_shifter;
 
   // next PC logic
   mux2 #(32)  pcmux(PCPlus4, Result, PCSrc, PCNext);
@@ -351,9 +353,8 @@ module datapath(input  logic        clk, reset,
   mux2 #(4)   ra2mux(Instr[3:0], Instr[15:12], RegSrc[1], RA2);
 
       // ADDED FOR LSL IMPLEMENTATION
-     // wire [31:0] saida_shifter;
       shifter sh1(SrcA,SrcB[11:7],saida_shifter);
-      mux_2 #(32) m1(ALUResult, saida_shifter,Instr[24:21],RA1);
+      mux_2 #(32) m1(ALUResult, saida_shifter,Instr[24:21],saida_mux);
 
   regfile     rf(clk, RegWrite, RA1, RA2,
                  Instr[15:12], Result, PCPlus8, 
