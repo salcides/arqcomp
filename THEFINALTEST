@@ -103,10 +103,10 @@ module testbench();
 
 	$display(DataAdr);
 
-        if(DataAdr === 4036 & WriteData === 1024) begin //VERIFICAR SE O ENDEREÃO DE MEMÃRIA CONTÃM O VALOR FINAL DA PG
+        if(DataAdr === 40 & WriteData === 1024) begin //VERIFICAR SE O ENDEREÃO DE MEMÃRIA CONTÃM O VALOR FINAL DA PG
           $display("Simulation succeeded");
           $stop;
-        end else if (DataAdr !== 4036) begin
+        end else if (DataAdr !== 40) begin
           $display("Simulation failed");
           $stop;
         end
@@ -131,7 +131,7 @@ module dmem(input  logic        clk, we,
             input  logic [31:0] a, wd,
             output logic [31:0] rd);
 
-  logic [31:0] RAM[63:0]; // extended
+  logic [31:0] RAM[100:0]; // extended
 
   assign rd = RAM[a[31:2]]; // word aligned
 
@@ -142,7 +142,7 @@ endmodule
 module imem(input  logic [31:0] a,
             output logic [31:0] rd);
  
-  logic [31:0] RAM[63:0];
+  logic [31:0] RAM[100:0];
 
   initial
       $readmemh("pg.dat",RAM);
