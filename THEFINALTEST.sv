@@ -78,11 +78,11 @@ module testbench();
   logic        clk;
   logic        reset;
 
-  logic [31:0] WriteData, DataAdr, R4;
+  logic [31:0] WriteData, DataAdr;
   logic        MemWrite;
 
   // instantiate device to be tested
-  top dut(clk, reset, WriteData, DataAdr, R4, MemWrite);
+  top dut(clk, reset, WriteData, DataAdr, MemWrite);
   
   // initialize test
   initial
@@ -115,13 +115,13 @@ module testbench();
 endmodule
 
 module top(input  logic        clk, reset, 
-           output logic [31:0] WriteData, DataAdr, R4, 
+           output logic [31:0] WriteData, DataAdr, 
            output logic        MemWrite);
 
   logic [31:0] PC, Instr, ReadData;
   
   // instantiate processor and memories
-  arm arm(clk, reset, PC, Instr, MemWrite, DataAdr, R4, 
+  arm arm(clk, reset, PC, Instr, MemWrite, DataAdr, 
           WriteData, ReadData);
   imem imem(PC, Instr);
   dmem dmem(clk, MemWrite, DataAdr, WriteData, ReadData);
@@ -154,7 +154,7 @@ module arm(input  logic        clk, reset,
            output logic [31:0] PC,
            input  logic [31:0] Instr,
            output logic        MemWrite,
-           output logic [31:0] ALUResult, R4, WriteData,
+           output logic [31:0] ALUResult, WriteData,
            input  logic [31:0] ReadData);
 
   logic [3:0] ALUFlags;
@@ -171,7 +171,7 @@ module arm(input  logic        clk, reset,
               ALUSrc, ALUControl,
               MemtoReg, PCSrc,
               ALUFlags, PC, Instr,
-              ALUResult, R4, WriteData, ReadData, Shift); // adicionado saida mux e shifter
+              ALUResult, WriteData, ReadData, Shift); // adicionado saida mux e shifter
 endmodule
 
 module controller(input  logic         clk, reset,
@@ -358,7 +358,7 @@ module datapath(input  logic        clk, reset,
                 output logic [3:0]  ALUFlags,
                 output logic [31:0] PC,
                 input  logic [31:0] Instr,
-                output logic [31:0] ALUResult, R4, WriteData,
+                output logic [31:0] ALUResult, WriteData,
                 input  logic [31:0] ReadData,
 		input logic	    Shift); // LSL IMPLEMENTATION
 
@@ -378,7 +378,7 @@ module datapath(input  logic        clk, reset,
   mux2 #(4)   ra2mux(Instr[3:0], Instr[15:12], RegSrc[1], RA2);
   regfile     rf(clk, RegWrite, RA1, RA2,
                  Instr[15:12], Result, PCPlus8, 
-                 SrcA, WriteData, R4); 
+                 SrcA, WriteData); 
 
   mux2 #(32)  resmux_(ALUResult, ReadData, MemtoReg, Result_); // lsl
   mux2 #(32)  resmux(Result_, Shifted, Shift, Result);
@@ -398,7 +398,7 @@ module regfile(input  logic        clk,
                input  logic        we3, 
                input  logic [3:0]  ra1, ra2, wa3, 
                input  logic [31:0] wd3, r15,
-               output logic [31:0] rd1, rd2, R4);
+               output logic [31:0] rd1, rd2);
 
   logic [31:0] rf[14:0];
 
@@ -412,7 +412,6 @@ module regfile(input  logic        clk,
 
   assign rd1 = (ra1 == 4'b1111) ? r15 : rf[ra1];
   assign rd2 = (ra2 == 4'b1111) ? r15 : rf[ra2];
-  assign R4 = rf[3]; 
 endmodule
 
 module extend(input  logic [23:0] Instr,
