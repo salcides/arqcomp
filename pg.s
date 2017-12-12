@@ -11,7 +11,7 @@
 		AND		R5, R5, #0 ; gerar registrador
 		AND		R6, R6, #0 ; zerar registrador
 		ADD		R9,R9, #2 ;R4 recebe valor de R0 + 2 -  valor de base
-		ADD		R5, R5, #4000 ; memoria a partir da qual valores serão armazenados
+		ADD		R5, R5, #3 ; memoria a partir da qual valores serão armazenados
 		STR		R9,[R5, #0] ; armazenar valor de base no endereço 4000
 		ADD		R6, R6, #2147483648 ; valor máximo que PG pode alcançar
 ; PG itself
